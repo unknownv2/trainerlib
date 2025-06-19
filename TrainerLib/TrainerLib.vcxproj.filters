@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Logging">
+      <UniqueIdentifier>{919f18ba-bd9f-4b8b-9320-e67f8e06b99f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hooking">
+      <UniqueIdentifier>{361aa234-9b14-4cbe-893d-260c99b0eae4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Debugging">
+      <UniqueIdentifier>{6cc23f24-fe4b-43ee-86bf-beb0e9a21f6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Process">
+      <UniqueIdentifier>{98623ae9-cc77-4181-9a0c-ce68ea200ee7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mono">
+      <UniqueIdentifier>{d84cd274-4963-450c-acdc-109f5b0d1562}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Trainer">
+      <UniqueIdentifier>{b6b11082-d92d-4192-859e-bd7697a6cdb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client">
+      <UniqueIdentifier>{80420b68-dace-4ab3-b21a-e8a65a8d2130}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tasks">
+      <UniqueIdentifier>{454a986d-167a-4e07-bb1f-304defe4613b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assembling">
+      <UniqueIdentifier>{136f6d44-1ecb-49e0-a793-aad4cb7bc2a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{a6b9f4ca-bc12-4f2b-84bd-13e3b54af896}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="NamedPipeLogger.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="MinHookLib.h">
+      <Filter>Hooking</Filter>
+    </ClInclude>
+    <ClInclude Include="Process.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="MonoDefs.h">
+      <Filter>Mono</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TrainerLib.h" />
+    <ClInclude Include="TrainerArgs.h">
+      <Filter>Trainer</Filter>
+    </ClInclude>
+    <ClInclude Include="IAssembler_001.h">
+      <Filter>Assembling</Filter>
+    </ClInclude>
+    <ClInclude Include="IHooker_001.h">
+      <Filter>Hooking</Filter>
+    </ClInclude>
+    <ClInclude Include="IMonoRuntime_001.h">
+      <Filter>Mono</Filter>
+    </ClInclude>
+    <ClInclude Include="IDebugger_001.h">
+      <Filter>Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="ILogger_001.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="IRemoteClient_001.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="ITaskManager_001.h">
+      <Filter>Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="ITrainerArgs_001.h">
+      <Filter>Trainer</Filter>
+    </ClInclude>
+    <ClInclude Include="IProcess_001.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Debugger.h">
+      <Filter>Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="MinHooker.h">
+      <Filter>Hooking</Filter>
+    </ClInclude>
+    <ClInclude Include="IProcess.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="ILogger.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="MonoRuntime.h">
+      <Filter>Mono</Filter>
+    </ClInclude>
+    <ClInclude Include="IHooker.h">
+      <Filter>Hooking</Filter>
+    </ClInclude>
+    <ClInclude Include="IRemoteClient.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskManager.h">
+      <Filter>Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Infinity.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="NamedPipeMessenger.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="IMessenger.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="UnhandledExceptionCatcher.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="IAssembler.h">
+      <Filter>Assembling</Filter>
+    </ClInclude>
+    <ClInclude Include="BindingAssembler.h">
+      <Filter>Assembling</Filter>
+    </ClInclude>
+    <ClInclude Include="Task.h">
+      <Filter>Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="IUndefinedSymbolHandler.h">
+      <Filter>Assembling</Filter>
+    </ClInclude>
+    <ClInclude Include="StdOutLogger.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="CETackAssembler.h">
+      <Filter>Assembling</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="Util.h" />
+    <ClInclude Include="Speedhack.h">
+      <Filter>Hooking</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugOutputRedirector.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="crc32.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadProxy.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="NamedPipeLogger.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="Process.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="TrainerLib.cpp" />
+    <ClCompile Include="Debugger.cpp">
+      <Filter>Debugging</Filter>
+    </ClCompile>
+    <ClCompile Include="MinHooker.cpp">
+      <Filter>Hooking</Filter>
+    </ClCompile>
+    <ClCompile Include="MonoRuntime.cpp">
+      <Filter>Mono</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskManager.cpp">
+      <Filter>Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="NamedPipeMessenger.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="UnhandledExceptionCatcher.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Infinity.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="BindingAssembler.cpp">
+      <Filter>Assembling</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Task.cpp">
+      <Filter>Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="CETackAssembler.cpp">
+      <Filter>Assembling</Filter>
+    </ClCompile>
+    <ClCompile Include="Speedhack.cpp">
+      <Filter>Hooking</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugOutputRedirector.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="crc32.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadProxy.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TrainerLib.def" />
+  </ItemGroup>
+</Project>

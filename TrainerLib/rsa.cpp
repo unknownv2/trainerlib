@@ -1,0 +1,162 @@
+#include "rsa.h"
+#include <intrin.h>
+#include <ThemidaSDK.h>
+
+const uint8_t paddingRSA2048_SHA256[RSA2048NUMBYTES - SHA256_DIGEST_SIZE] = {
+	0x00, 0x01, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x30, 0x31, 0x30,
+	0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20,
+};
+
+__declspec(noinline) void RSAPublicKey::subM(uint32_t *a)
+{
+	int64_t A = 0;
+	for (auto i = 0; i < RSA2048NUMWORDS; ++i) {
+		A += static_cast<uint64_t>(a[i]) - this->n[i];
+		a[i] = static_cast<uint32_t>(A);
+		A >>= 32;
+	}
+}
+
+__declspec(noinline) void RSAPublicKey::geM(uint32_t *a, bool& result)
+{
+	result = false;
+
+	for (auto i = RSA2048NUMWORDS; i;) {
+		--i;
+		if (a[i] < this->n[i]) {
+			return;
+		}
+
+		if (a[i] > this->n[i]) {
+			result = true;
+			return;
+		}
+	}
+
+	result = true;
+}
+
+__declspec(noinline) void RSAPublicKey::montMulAdd(uint32_t* c, const uint32_t a, const uint32_t* b)
+{
+	auto A = static_cast<uint64_t>(a) * b[0] + c[0];
+	auto d0 = static_cast<uint32_t>(A) * this->n0inv;
+	auto B = static_cast<uint64_t>(d0) * this->n[0] + static_cast<uint32_t>(A);
+	int i;
+
+	for (i = 1; i < RSA2048NUMWORDS; ++i) {
+		A = (A >> 32) + static_cast<uint64_t>(a) * b[i] + c[i];
+		B = (B >> 32) + static_cast<uint64_t>(d0) * this->n[i] + static_cast<uint32_t>(A);
+		c[i - 1] = static_cast<uint32_t>(B);
+	}
+
+	A = (A >> 32) + (B >> 32);
+
+	c[i - 1] = static_cast<uint32_t>(A);
+
+	if (A >> 32) {
+		subM(c);
+	}
+}
+
+__declspec(noinline) void RSAPublicKey::montMul(uint32_t* c, uint32_t* a, const uint32_t b[RSA2048NUMWORDS])
+{
+	for (auto i = 0; i < RSA2048NUMWORDS; ++i) {
+		c[i] = 0;
+	}
+
+	for (auto i = 0; i < RSA2048NUMWORDS; ++i) {
+		montMulAdd(c, a[i], b);
+	}
+}
+
+__declspec(noinline) void RSAPublicKey::modpowF4(uint8_t* inout)
+{
+	uint32_t a[RSA2048NUMBYTES] = { 0 };
+	uint32_t aR[RSA2048NUMBYTES] = { 0 };
+	uint32_t aaR[RSA2048NUMBYTES] = { 0 };
+	auto aaa = aaR;
+
+	for (auto i = 0; i < RSA2048NUMWORDS; ++i) {
+		uint32_t tmp =
+			(inout[((RSA2048NUMWORDS - 1 - i) * 4) + 0] << 24) |
+			(inout[((RSA2048NUMWORDS - 1 - i) * 4) + 1] << 16) |
+			(inout[((RSA2048NUMWORDS - 1 - i) * 4) + 2] << 8) |
+			(inout[((RSA2048NUMWORDS - 1 - i) * 4) + 3] << 0);
+		a[i] = tmp;
+	}
+
+	montMul(aR, a, this->rr);
+
+	for (auto i = 0; i < 16; i += 2) {
+		montMul(aaR, aR, aR);
+		montMul(aR, aaR, aaR);
+	}
+
+	VM_FAST_START
+
+	montMul(aaa, aR, a);
+
+	bool result;
+	geM(aaa, result);
+
+	if (result) {
+		subM(aaa);
+	}
+
+	for (auto i = 63; i >= 0; --i) {
+		auto tmp = aaa[i];
+		*inout++ = uint8_t(tmp >> 24);
+		*inout++ = uint8_t(tmp >> 16);
+		*inout++ = uint8_t(tmp >> 8);
+		*inout++ = uint8_t(tmp >> 0);
+	}
+
+	VM_FAST_END
+
+	__nop();
+}
+
+__declspec(noinline) void RSAPublicKey::Verify(const uint8_t sig[RSA2048NUMBYTES], const uint8_t hash[SHA256_DIGEST_SIZE], bool& result)
+{
+	VM_FAST_START
+
+	result = false;
+
+	uint8_t buf[RSA2048NUMBYTES];
+
+	for (auto x = 0; x < RSA2048NUMBYTES; x++) {
+		buf[x] = sig[x];
+	}
+
+	modpowF4(buf);
+
+	int i;
+
+	for (i = 0; i < RSA2048NUMBYTES - SHA256_DIGEST_SIZE; ++i) {
+		if (buf[i] != paddingRSA2048_SHA256[i]) {
+			return;
+		}
+	}
+
+	for (; i < RSA2048NUMBYTES; ++i) {
+		if (buf[i] != *hash++) {
+			return;
+		}
+	}
+
+	result = true;
+
+	VM_FAST_END
+}
